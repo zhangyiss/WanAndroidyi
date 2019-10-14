@@ -14,15 +14,20 @@ import android.widget.Toast;
 import com.bier.myapplication.Baen.ListBaen;
 import com.bier.myapplication.R;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter <ListAdapter.ListViewHolder>{
 
     private List<ListBaen> ItimList;
     private Context mContext;
+
     public ListAdapter(Context context, List<ListBaen>ItimList){
         this.ItimList=ItimList;
         this.mContext=context;
+  ;
+
+
 
     }
 

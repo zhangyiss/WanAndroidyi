@@ -40,22 +40,25 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private RecyclerView  recyclerView;
-    private  SmartRefreshLayout  refreshLayout;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private RecyclerView recyclerView;
+    private SmartRefreshLayout refreshLayout;
     private Context mContext;
-    private List<NewsBean>list;
+    private List<NewsBean> list;
     private MainAdapter mainAdapter;
-    private  ResponseBaen responseBaen;
+    private ResponseBaen responseBaen;
     @SuppressLint("HandlerLeak")
-    private  Handler handler=new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what==0){
-                list.addAll(responseBaen.getData());
-                mainAdapter.notifyDataSetChanged();
-
+            switch (msg.what) {
+                case 0:
+                    list.addAll(responseBaen.getData());
+                    mainAdapter.notifyDataSetChanged();
+                    break;
+                    default:
+                        break;
             }
 
         }
@@ -66,70 +69,71 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initview();
-        mContext=this;
+        mContext = this;
         initData();
         apiData();
     }
 
     private void apiData() {
-        Log.i("data117",Thread.currentThread().getName());
-                OkHttpClient client=new OkHttpClient();
-                Request request=new Request.Builder()
-                        .get()
-                        .url("https://wanandroid.com/wxarticle/chapters/json")
-                        .build();
-                Call call=client.newCall(request);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        String string = response.body().string();
-                        Log.i("data194",string);
-                       JSONObject object= JSONObject.parseObject(string);
-                        responseBaen=JSONObject.toJavaObject(object,ResponseBaen.class);
-                        handler.sendEmptyMessage(0);
-
-                    }
-                });
+        Log.i("data117", Thread.currentThread().getName());
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .get()
+                .url("https://wanandroid.com/wxarticle/chapters/json")
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
 
             }
 
-    private void initData() {
-        list=new ArrayList<>();
-       recyclerView.setLayoutManager(new LinearLayoutManager(this));
-       mainAdapter=new MainAdapter(mContext,list);
-       recyclerView.setAdapter(mainAdapter);
-       recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String string = response.body().string();
+                Log.i("data194", string);
+                JSONObject object = JSONObject.parseObject(string);
+                responseBaen = JSONObject.toJavaObject(object, ResponseBaen.class);
+                handler.sendEmptyMessage(0);
+
+
+            }
+        });
+
     }
+
+    private void initData() {
+        list = new ArrayList<>();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mainAdapter = new MainAdapter(mContext, list);
+        recyclerView.setAdapter(mainAdapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+    }
+
     private void initview() {
-      recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-       refreshLayout = (SmartRefreshLayout) findViewById(R.id.refreshLayout);
-       refreshLayout.setOnRefreshListener(new OnRefreshLoadMoreListener() {
-           @Override
-           public void onLoadMore( RefreshLayout refreshLayout) {
-               apiData();
-               refreshLayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        refreshLayout = (SmartRefreshLayout) findViewById(R.id.refreshLayout);
+        refreshLayout.setOnRefreshListener(new OnRefreshLoadMoreListener() {
+            @Override
+            public void onLoadMore(RefreshLayout refreshLayout) {
+                apiData();
+                refreshLayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
 
 
+            }
 
-           }
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                refreshLayout.finishLoadMore(2000);
+                apiData();
 
-           @Override
-           public void onRefresh( RefreshLayout refreshLayout) {
-               refreshLayout.finishLoadMore(2000);
-               apiData();
-
-           }
-       });
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
 
         }
 

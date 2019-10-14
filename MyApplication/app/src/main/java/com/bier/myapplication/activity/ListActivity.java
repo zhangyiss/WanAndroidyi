@@ -10,19 +10,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.bier.myapplication.Baen.BannerBaen;
-import com.bier.myapplication.Baen.BannerBaenResponseBaen;
+import com.bier.myapplication.Baen.BannerBeanResponseBaen;
 import com.bier.myapplication.Baen.ListBaen;
 import com.bier.myapplication.Baen.ListResponseBaen;
-import com.bier.myapplication.Baen.NewsBean;
 import com.bier.myapplication.R;
 import com.bier.myapplication.adapter.ListAdapter;
 import com.bier.myapplication.view.GlideImageLoader;
-import com.bumptech.glide.Glide;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
@@ -37,41 +36,41 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ListActivity<list> extends AppCompatActivity {
-    private  RecyclerView recyclerView;
-    private  Banner banner;
-    private BannerBaenResponseBaen bannerBaenResponseBaen;
+public class ListActivity extends AppCompatActivity {
+    private RecyclerView recyclerView;
+    private Banner banner;
+    private BannerBeanResponseBaen bannerBaenResponseBaen;
     private ListResponseBaen listResponseBaen;
-    private   List<BannerBaen>  Listbanner;
+    private List<BannerBaen> Listbanner;
     private List<String> bannerList;
-    private  ListAdapter listAdapter;
+    private ListAdapter listAdapter;
     private Context mContext;
-    private  List<ListBaen> list;
+    private List<ListBaen> list;
     @SuppressLint("HandlerLeak")
-    private Handler mhandler=new Handler(){
+    private Handler mhandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:
-                    Listbanner=bannerBaenResponseBaen.getData();
-                     bannerList = new ArrayList<>();
-                     for (int i = 0; i < Listbanner.size(); i++) {
-                    bannerList.add(Listbanner.get(i).getImagePath());
-                }
-                banner.setImages(bannerList);
-               banner.start();
-               break;
-                case 1:
-                   list.addAll(listResponseBaen.getData());
-                   listAdapter.notifyDataSetChanged();
+                    Listbanner = bannerBaenResponseBaen.getData();
+                    bannerList = new ArrayList<>();
+                    for (int i = 0; i < Listbanner.size(); i++) {
+                        bannerList.add(Listbanner.get(i).getImagePath());
+                    }
+                    banner.setImages(bannerList);
+                    banner.start();
                     break;
-                    default:
-                        break;
-
+                case 1:
+                    list.addAll(listResponseBaen.getData());
+                    listAdapter.notifyDataSetChanged();
+                    break;
+                default:
+                    break;
             }
         }
     };
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,30 +78,32 @@ public class ListActivity<list> extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         iniView();
         initlist();
-        mContext=this;
+        mContext = this;
         InitData();
-        initapi();
+        initApi();
 
     }
 
     private void initlist() {
-        list=new ArrayList<>();
+        list = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         LinearLayoutManager layoutmanager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutmanager);
-         layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
-        listAdapter =new ListAdapter(mContext,list);
+        layoutmanager.setOrientation(LinearLayoutManager.VERTICAL);
+        listAdapter = new ListAdapter(mContext, list);
         recyclerView.setAdapter(listAdapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerView.findViewHolderForItemId(0);
     }
 
-    private void initapi() {
-        OkHttpClient client=new OkHttpClient();
-        Request request=new Request.Builder()
+    private void initApi() {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
                 .get()
                 .url("https://www.wanandroid.com//hotkey/json")
                 .build();
-        Call call=client.newCall(request);
+        Call call = client.newCall(request);
+
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -111,14 +112,12 @@ public class ListActivity<list> extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.i("data118",Thread.currentThread().getName());
+                Log.i("data118", Thread.currentThread().getName());
                 String s = response.body().string();
-                Log.i("data446",s);
-                JSONObject object=JSONObject.parseObject(s);
+                Log.i("data446", s);
+                JSONObject object = JSONObject.parseObject(s);
                 listResponseBaen = JSONObject.toJavaObject(object, ListResponseBaen.class);
                 mhandler.sendEmptyMessage(1);
-
-
             }
         });
     }
@@ -142,41 +141,40 @@ public class ListActivity<list> extends AppCompatActivity {
     }
 
     private void InitData() {
-        Log.i("data116",Thread.currentThread().getName());
-        OkHttpClient client=new OkHttpClient();
-        Request request=new Request.Builder()
+        Log.i("data116", Thread.currentThread().getName());
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
                 .get()
                 .url("https://www.wanandroid.com/banner/json")
                 .build();
-        Call call=client.newCall(request);
+        Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.i("data",e.toString());
-
-
+                if (!TextUtils.isEmpty(e.getMessage())) {
+                    Toast.makeText(ListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String s = response.body().string();
-                Log.i("data111",s);
-                JSONObject object= JSONObject.parseObject(s);
-              bannerBaenResponseBaen=  JSONObject.toJavaObject(object,BannerBaenResponseBaen.class);
-              mhandler.sendEmptyMessage(0);
+                JSONObject object = JSONObject.parseObject(s);
+                bannerBaenResponseBaen = JSONObject.toJavaObject(object, BannerBeanResponseBaen.class);
+                mhandler.sendEmptyMessage(0);
 
 
             }
         });
     }
 
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mhandler!=null){
+        if (mhandler != null) {
             mhandler.removeCallbacksAndMessages(null);
         }
     }
+
+
 }

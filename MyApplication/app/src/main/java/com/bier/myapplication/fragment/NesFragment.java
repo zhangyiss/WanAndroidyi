@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,16 +17,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.bier.myapplication.Baen.BannerBaen;
-import com.bier.myapplication.Baen.BannerBaenResponseBaen;
+import com.bier.myapplication.Baen.BannerBeanResponseBaen;
 import com.bier.myapplication.Baen.ListBaen;
 import com.bier.myapplication.Baen.ListResponseBaen;
 import com.bier.myapplication.EventBusBaen.MessageWrap;
 import com.bier.myapplication.R;
 import com.bier.myapplication.adapter.ListAdapter;
-import com.bier.myapplication.adapter.TabLayoutViewPageAdapter;
+import com.bier.myapplication.http.ApiCallback;
+import com.bier.myapplication.http.ApiManager;
 import com.bier.myapplication.view.GlideImageLoader;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -50,7 +49,7 @@ public class NesFragment extends Fragment {
     private LinearLayout lay_title;
     private RecyclerView recyclerView;
     private Banner banner;
-    private BannerBaenResponseBaen bannerBaenResponseBaen;
+    private BannerBeanResponseBaen bannerBaenResponseBaen;
     private ListResponseBaen listResponseBaen;
     private List<BannerBaen> listbanner;
     private List<String> bannerList;
@@ -75,6 +74,9 @@ public class NesFragment extends Fragment {
                     break;
                 case 1:
                     list.addAll(listResponseBaen.getData());
+                    break;
+                    default:
+                        break;
 
             }
         }
@@ -96,34 +98,23 @@ public class NesFragment extends Fragment {
     }
 
     private void initapi() {
-        Log.i("data101",Thread.currentThread().getName());
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://www.wanandroid.com//hotkey/json")
-                .get()
-                .build();
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String s = response.body().string();
-                JSONObject object = JSONObject.parseObject(s);
-                listResponseBaen = JSONObject.toJavaObject(object, ListResponseBaen.class);
-                mhandler.sendEmptyMessage(1);
-
-                Log.i("data111",Thread.currentThread().getName());
 
 
-            }
-        });
     }
 
     private void initData() {
+        ApiManager.getBanner(new ApiCallback() {
+            @Override
+            public void success(JSONObject jsonObject) {
+
+
+            }
+
+            @Override
+            public void failure(IOException e) {
+
+            }
+        });
         OkHttpClient client = new OkHttpClient();
          Request request=new Request.Builder()
                  .url("https://www.wanandroid.com/banner/json")
@@ -141,7 +132,7 @@ public class NesFragment extends Fragment {
                 String string = response.body().string();
                   Log.i("data287",string);
                   JSONObject object= JSONObject.parseObject(string);
-                  bannerBaenResponseBaen = JSONObject.toJavaObject(object, BannerBaenResponseBaen.class);
+                  bannerBaenResponseBaen = JSONObject.toJavaObject(object, BannerBeanResponseBaen.class);
                   mhandler.sendEmptyMessage(0);
                 Log.i("data145",Thread.currentThread().getName());
                 EventBus.getDefault().post(new MessageWrap("refresh"));

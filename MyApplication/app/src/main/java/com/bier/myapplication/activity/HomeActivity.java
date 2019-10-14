@@ -28,7 +28,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private ViewPager viewPager;
     private List<Fragment> fragmentList = new ArrayList<>();
 
-
     /**
      * 首页
      */
@@ -36,7 +35,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private final int TAB_HOME = 0;
 
     /**
-     * 玩玩
+     *
      */
 
     private final int TAB_WW = 1;

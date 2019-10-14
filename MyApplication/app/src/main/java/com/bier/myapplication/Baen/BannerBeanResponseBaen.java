@@ -3,7 +3,7 @@ package com.bier.myapplication.Baen;
 import java.io.Serializable;
 import java.util.List;
 
-public class BannerBaenResponseBaen implements Serializable {
+public class BannerBeanResponseBaen implements Serializable {
     private static final long serialVersionUID = 7350779371566346100L;
     private List<BannerBaen> data;
     private  String  errorCode;

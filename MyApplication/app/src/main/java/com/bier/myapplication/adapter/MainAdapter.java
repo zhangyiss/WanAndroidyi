@@ -1,6 +1,5 @@
 package com.bier.myapplication.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -11,14 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bier.myapplication.Baen.NewsBean;
 import com.bier.myapplication.R;
 import com.bier.myapplication.activity.ListActivity;
-import com.bier.myapplication.activity.MainActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
@@ -48,12 +43,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                 Intent intent = new Intent();
                 intent.setClass(mContext, ListActivity.class);
                 mContext.startActivity(intent);
-                Toast.makeText(mContext, "点击了", Toast.LENGTH_SHORT).show();
-
             }
         });
-
-
     }
 
     @Override

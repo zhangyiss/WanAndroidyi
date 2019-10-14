@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 
 import com.alibaba.fastjson.JSONObject;
 import com.bier.myapplication.Baen.BannerBaen;
-import com.bier.myapplication.Baen.BannerBaenResponseBaen;
+import com.bier.myapplication.Baen.BannerBeanResponseBaen;
 import com.bier.myapplication.Baen.TobListBaen;
 import com.bier.myapplication.Baen.TobResponseBaen;
 import com.bier.myapplication.EventBusBaen.MessageWrap;
@@ -42,7 +42,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class TabFragment extends Fragment {
-    private BannerBaenResponseBaen bannerBaenResponseBaen;
+    private BannerBeanResponseBaen bannerBaenResponseBaen;
     private Banner banner;
     private List<BannerBaen> listbanner;
     private TobResponseBaen tobResponseBaen;
@@ -111,7 +111,7 @@ public class TabFragment extends Fragment {
                 String string = response.body().string();
                 Log.i("data287", string);
                 JSONObject object = JSONObject.parseObject(string);
-                bannerBaenResponseBaen = JSONObject.toJavaObject(object, BannerBaenResponseBaen.class);
+                bannerBaenResponseBaen = JSONObject.toJavaObject(object, BannerBeanResponseBaen.class);
                 mhandler.sendEmptyMessage(1);
                 Log.i("data145", Thread.currentThread().getName());
 

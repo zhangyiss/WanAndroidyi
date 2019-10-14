@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.youth.banner.loader.ImageLoader;
 
-import java.nio.file.Path;
 
 public class GlideImageLoader extends ImageLoader {
     @Override
@@ -15,6 +14,7 @@ public class GlideImageLoader extends ImageLoader {
         Uri uri = Uri.parse((String) path);
         imageView.setImageURI(uri);
         Glide.with(context).load(uri).into(imageView);
+
     }
 
     @Override
